@@ -1,16 +1,25 @@
 
+# Environment variables and API keys
 .env
 .env.*
 !.env.example
 
+# Python virtual environment
 venv/
 .venv/
+
+# Python cache
 __pycache__/
 *.py[cod]
 
+# Downloaded audio and video files
+downloades/
+
+# Vector databases
 chroma_db/
 chroma/
 
+# Editor and system files
 .vscode/
 .idea/
 .DS_Store

@@ -11,9 +11,8 @@ import os
 
 
 def get_llm():
-    # CHANGED: Replaced Mistral model and API key with Gemini
     return ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash",
+        model=os.getenv("GEMINI_MODEL", "gemini-3.8-flash"),
         google_api_key=os.getenv("GEMINI_API_KEY"),
         temperature=0.2
     )
