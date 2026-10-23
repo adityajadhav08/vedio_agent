@@ -11,7 +11,7 @@ import os
 
 def get_llm():
     return ChatGoogleGenerativeAI(
-        model=os.getenv("GEMINI_MODEL", "gemini-3.8-flash"),
+        model=os.getenv("GEMINI_MODEL", "gemini-3.5-flash"),
         google_api_key=os.getenv("GEMINI_API_KEY"),
         temperature=0.3
     )
@@ -27,38 +27,16 @@ def split_transcript(transcript: str) -> list:
 
 def summarize(transcript : str) -> str:
     llm = get_llm()
-
-    map_prompt = ChatPromptTemplate.from_messages(
-        [
-        ("system", "Summarize this portion of a meeting transcript concisely."),
-        ("human", "{text}"),
-    ]
-    )
-
-    map_chain = map_prompt | llm | StrOutputParser()
-
-    chunks = split_transcript(transcript)
-
-    chunk_summaries = [map_chain.invoke({"text" : chunk}) for chunk in chunks]
-
-    combined = "\n\n".join(chunk_summaries)
-
-    combined_prompt = ChatPromptTemplate.from_messages(
-        [
+    prompt = ChatPromptTemplate.from_messages([
         (
             "system",
-            "You are an expert meeting summarizer. Combine these partial summaries "
-            "into one final professional meeting summary in bullet points.",
+            "You are an expert meeting summarizer. Provide a comprehensive, professional "
+            "meeting summary in clear bullet points highlighting key discussion topics.",
         ),
         ("human", "{text}"),
-    ]
-    )
-
-    combined_chain = (
-        RunnablePassthrough() | RunnableLambda(lambda x:{"text":x}) | combined_prompt | llm | StrOutputParser()
-    )
-
-    return combined_chain.invoke(combined)
+    ])
+    chain = prompt | llm | StrOutputParser()
+    return chain.invoke({"text": transcript})
 
 def generate_title(transcript : str) -> str:
     llm = get_llm()

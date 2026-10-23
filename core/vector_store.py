@@ -17,7 +17,7 @@ def get_embeddings():
     )
 
 def build_vector_store(transcript : str)->Chroma:
-    print("Building vector Store")
+    print("\n[VECTOR STORE] Building ChromaDB Vector Store...")
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size = 500,
@@ -29,6 +29,7 @@ def build_vector_store(transcript : str)->Chroma:
         Document(page_content=chunk, metadata = {'chunk_index' : i})
         for i,chunk in enumerate(chunks)
     ]
+    print(f"  -> Created {len(docs)} chunk(s). Generating embeddings with {EMBEDDING_MODEL}...")
 
     embeddings = get_embeddings()
     vector_store = Chroma.from_documents(
@@ -37,7 +38,7 @@ def build_vector_store(transcript : str)->Chroma:
         collection_name=COLLECTION_NAME,
         persist_directory=CHROMA_DIR
     )
-
+    print(f"  -> ChromaDB Vector Store successfully created in '{CHROMA_DIR}'!")
     return vector_store
 
 
